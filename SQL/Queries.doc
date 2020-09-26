@@ -1,0 +1,206 @@
+1)Show No of Active Employees,Inactive Employees
+
+i)SELECT COUNT(EmployeeID) as activeusers FROM `Employees` WHERE status='ACTIVE'
+ii)SELECT COUNT(EmployeeID) as Inactiveusers FROM `Employees` WHERE status='INACTIVE'
+
+2)Total Sales By Employee
+SELECT 
+Orders.EmployeeID,
+Orders.OrderID ,
+OrderDetails.Quantity ,
+(OrderDetails.Quantity * OrderDetails.UnitPrice - OrderDetails.Discount) AS Total
+FROM Orders 
+INNER JOIN OrderDetails 
+ON 
+Orders.OrderID=OrderDetails.OrderID ORDER BY Orders.EmployeeID
+
+
+3) Total Sales in Territories:
+SELECT 
+EmployeeID,
+orderID,
+TerritoryID, 
+Quantity, 
+(Quantity*UnitPrice-Discount) Revenue
+FROM `EmployeeTerritories`
+INNER JOIN Orders USING (EmployeeID) 
+INNER JOIN OrderDetails USING (OrderId)
+GROUP BY Orders.EmployeeID
+
+4)Total Income By customer:
+SELECT 
+Orders.CustomerID,
+Orders.OrderID ,
+OrderDetails.Quantity ,
+(OrderDetails.Quantity * OrderDetails.UnitPrice - OrderDetails.Discount) AS Income
+FROM Orders 
+INNER JOIN OrderDetails 
+ON 
+Orders.OrderID=OrderDetails.OrderID ORDER BY Orders.CustomerID
+
+5)Top 5 customer(Based on total OrdersDone):
+SELECT 
+Orders.CustomerID,
+Orders.OrderID ,
+OrderDetails.Quantity
+FROM Orders 
+INNER JOIN OrderDetails 
+ON 
+Orders.OrderID=OrderDetails.OrderID ORDER BY OrderDetails.Quantity DESC
+
+6)Top 5 Employee(Based on total sales Done):
+SELECT 
+Orders.EmployeeID,
+Orders.OrderID ,
+OrderDetails.Quantity ,
+(OrderDetails.Quantity * OrderDetails.UnitPrice - OrderDetails.Discount) AS SalesDone
+FROM Orders 
+INNER JOIN OrderDetails 
+ON 
+Orders.OrderID=OrderDetails.OrderID ORDER BY SalesDone DESC
+
+7)Top Selling Product:
+
+SELECT * FROM `OrderDetails` WHERE Quantity=(SELECT MAX(Quantity) FROM OrderDetails)
+
+8)least Selling Product:
+
+SELECT * FROM `OrderDetails` WHERE Quantity=(SELECT MIN(Quantity) FROM OrderDetails)
+
+9)Sold products by Employee:
+
+SELECT 
+OrderID,
+CustomerID,
+EmployeeID,
+LastName,
+ProductID,
+ProductName
+FROM Products 
+INNER JOIN OrderDetails USING (ProductID)
+INNER JOIN Orders USING (OrderID)
+INNER JOIN Employees USING (EmployeeID)
+
+10)ordered Products by  customer:
+
+SELECT 
+OrderID,
+CustomerID,
+ContactName,
+ProductName
+FROM Products 
+INNER JOIN OrderDetails USING (ProductID)
+INNER JOIN Orders USING (OrderID)
+INNER JOIN Customers USING (CustomerID)
+
+11)Avg monthly revenue:
+SELECT 
+MONTH(OrderDate) month,
+ROUND(AVG(Quantity*UnitPrice-Discount)) Revenue
+FROM Orders
+INNER JOIN
+OrderDetails USING (OrderID)
+WHERE YEAR(OrderDate)=2020
+GROUP By MONTH
+
+12)Avg Revenue in a day:
+SELECT 
+DATE(OrderDate) DATE,
+ROUND(AVG(Quantity*UnitPrice-Discount)) Revenue
+FROM Orders
+INNER JOIN
+OrderDetails USING (OrderID)
+WHERE YEAR(OrderDate)=2020
+GROUP By DATE
+
+13)last 5 sales:
+
+SELECT 
+OrderID,
+ProductID,
+LAST_VALUE(OrderID),
+ProductName
+FROM `OrderDetails` INNER JOIN Products USING (ProductID)
+
+14) last 5 sold products:
+
+SELECT 
+OrderID,
+ProductID,
+LAST_VALUE(OrderID),
+ProductName
+FROM `OrderDetails` INNER JOIN Products USING (ProductID)
+
+15)Most expensive product:
+
+SELECT * FROM `Products` WHERE UnitPrice=(SELECT MAX(UnitPrice) FROM Products)
+
+16)Required Products count for particular day:
+
+SELECT 
+OrderID,
+ProductID,
+DATE(RequiredDate) DATE,
+Quantity as RequiredProducts
+FROM Orders INNER JOIN 
+OrderDetails USING(OrderID)
+GROUP BY DATE
+
+17Highest profitable territory:
+
+SELECT
+TerritoryID, 
+Quantity,
+(Quantity*UnitPrice-Discount) Revenue
+FROM `EmployeeTerritories`
+INNER JOIN Orders USING (EmployeeID) 
+INNER JOIN OrderDetails USING (OrderId)
+ORDER BY Revenue DESC LIMIT 1
+
+18)Highest profitable Region:
+
+SELECT 
+TerritoryID,
+TerritoryDescription,
+(Quantity*UnitPrice-Discount) Revenue
+FROM `EmployeeTerritories`
+INNER JOIN Orders USING (EmployeeID)
+INNER JOIN Territories USING (TerritoryID)
+INNER JOIN OrderDetails USING (OrderId)
+ORDER BY Revenue DESC LIMIT 1
+
+19)Total products shipping today:
+SELECT 
+OrderID,
+ShippedDate,
+ProductId
+FROM `Orders` INNER JOIN OrderDetails USING (OrderID)
+WHERE ShippedDate=CURRENT_DATE
+
+20)ordered products by customer between two days:
+
+SELECT 
+OrderId,
+CustomerID,
+ProductId,
+ProductName,
+OrderDate
+FROM Orders 
+INNER JOIN OrderDetails USING (OrderId)
+INNER JOIN Products USING (ProductId)
+WHERE OrderDate 
+BETWEEN CAST('2020-08-26'AS DATE) AND CAST('2020-09-03'AS DATE)
+
+21)sold Products by Employe between two days:
+
+SELECT 
+OrderId,
+EmployeeID,
+ProductId,
+ProductName,
+OrderDate
+FROM Orders 
+INNER JOIN OrderDetails USING (OrderId)
+INNER JOIN Products USING (ProductId)
+WHERE OrderDate 
+BETWEEN CAST('2020-08-01'AS DATE) AND CAST('2020-08-30'AS DATE)
