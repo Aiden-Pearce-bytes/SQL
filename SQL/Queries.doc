@@ -204,3 +204,24 @@ INNER JOIN OrderDetails USING (OrderId)
 INNER JOIN Products USING (ProductId)
 WHERE OrderDate 
 BETWEEN CAST('2020-08-01'AS DATE) AND CAST('2020-08-30'AS DATE)
+
+
+22) Second Highest Salary Employer in Employer table
+
+SELECT * FROM Employers
+ORDER BY Salary DESC 
+LIMIT 1,1
+
+22) Third Highest Salary Employer in Employer table
+SELECT * FROM Employers
+ORDER BY Salary DESC 
+LIMIT 2,2
+
+23) Duplicate EmailID count in Employer table
+SELECT 
+EmailID, 
+COUNT(EmailID)
+FROM
+Employers
+GROUP BY EmailID
+HAVING COUNT(EmailID) > 1
